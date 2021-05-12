@@ -11,11 +11,11 @@ function markX(element){
     if (element.classList.contains("cell") && element.innerText == ""){
         element.innerText = "X";
 
-        let gameContinous = CheckResult();
+        let finished = isGameFinished();
 
-        if (gameContinous){
+        if (finished == false){
             opponentMove();
-            CheckResult();
+            isGameFinished();
         }
      //element has special attribute){
         //edit attribute text to X
@@ -48,18 +48,31 @@ function opponentMove(){
 }
 
 function getRandomNumber(min, max) {
-        return Math.floor(Math.random() * (max - min)) + min;
+        const r = Math.random() * (max - min) + min;
+        return Math.floor(r);
 }
 
-function CheckResult(){
-    isWinnerDetermined();
-    return anyMovesLeft();
-}
-
-function whoWon(){
-    // analyses the lines and calculates the winner
+function isGameFinished(){
+    return isWinnerDetermined() || noMovesLeft();
 
 }
+
+function noMovesLeft(){
+    //1. we no longer have a move
+    let cells = Array.from(document.getElementsByClassName("cell"));
+    cells = cells.filter(cell => cell.innerText == "");
+    if (cells.length == 0){
+        // modify game status to be draw
+        var gameStatusElement = document.querySelector(".game--status");
+
+        gameStatusElement.innerText = "Draw";
+
+        return true;
+    }
+
+    return false;
+}
+
 
 function isWinnerDetermined(){
     let winningCellCombinations = [
@@ -74,6 +87,23 @@ function isWinnerDetermined(){
     ]
 
         //go through there winning combinations
+        winningCellCombinations.forEach(combination => 
+            {
+                elementValue1 = getDataCellTextValueByIndex(combination[0]);
+                elementValue2 = getDataCellTextValueByIndex(combination[1]);
+                elementValue3 = getDataCellTextValueByIndex(combination[2]);
+            
+                if (elementValue1 == elementValue2 && elementValue2 && elementValue3 && elementValue1 != ""){
+                    var gameStatusElement = document.querySelector(".game--status");
+
+                    gameStatusElement.innerText = `${elementValue1} has won the game`
+                    return true;
+
+                }
+
+            });
+        
+            return false;
         //Get all cells of those attibute values
         //Check all the elements have a same inner text (X or O)
         //Carefull of empty values
@@ -82,18 +112,11 @@ function isWinnerDetermined(){
         //2. we have 3 X or 3 O in a row, column or diagonal
 }
 
-function anyMovesLeft(){
-    //1. we no longer have a move
-    let cells = Array.from(document.getElementsByClassName("cell"));
-    cells = cells.filter(cell=> cell.innerText == "");
-    if (cells.length == 0){
-        // modify game status to be draw
-        document.querySelector(".game--status").innerText = "Draw";
-        return false;
-    }
+function getDataCellTextValueByIndex(index){
+    return document.querySelector(`[data-cell-index="${index}"]`).innerText
 
-    return true;
 }
+
 
 function resetGame(){
     
