@@ -94,10 +94,13 @@ function isWinnerDetermined(){
                 elementValue3 = getDataCellTextValueByIndex(combination[2]);
             
                 if (elementValue1 == elementValue2 && elementValue2 && elementValue3 && elementValue1 != ""){
+                    
                     var gameStatusElement = document.querySelector(".game--status");
-
+                    
                     gameStatusElement.innerText = `${elementValue1} has won the game`
+                    
                     return true;
+                    
 
                 }
 
