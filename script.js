@@ -1,4 +1,5 @@
 // document laiko visa informacija
+let playerWinscore = 0;
 
 document.addEventListener('click', function(event) {
     var target = event.target
@@ -6,9 +7,29 @@ document.addEventListener('click', function(event) {
     markX(target);  
 });
 
+function resetGame(){
+
+    // all board cells should be empty;
+    let cells = Array.from(document.getElementsByClassName("cell"));
+
+    cells.forEach(x => x.innerText = "");
+
+    //game status text should be empty;
+    var gameStatusElement = document.querySelector(".game--status");
+            
+    gameStatusElement.innerText = '';
+
+
+}
+
+
+    // modify button html element to include onclick
+
 
 function markX(element){
-    if (element.classList.contains("cell") && element.innerText == ""){
+    if (element.classList.contains("cell") 
+    && element.innerText == ""
+        && !isGameFinished()){
         element.innerText = "X";
 
         let finished = isGameFinished();
@@ -38,7 +59,7 @@ function opponentMove(){
 
 
     //let randomNo = randomInteger(0, elements.length - 1);
-    let randomNumber = getRandomNumber(0, cells.length);
+    let randomNumber = Math.floor(Math.random() * (cells.length));
 
     //let selectedElement = elements[randomNo];
     let randomCell = cells[randomNumber];
@@ -47,10 +68,7 @@ function opponentMove(){
     randomCell.innerText = 'O'
 }
 
-function getRandomNumber(min, max) {
-        const r = Math.random() * (max - min) + min;
-        return Math.floor(r);
-}
+
 
 function isGameFinished(){
     return isWinnerDetermined() || noMovesLeft();
@@ -86,41 +104,43 @@ function isWinnerDetermined(){
         [2,4,6]
     ]
 
-        //go through there winning combinations
-        winningCellCombinations.forEach(combination => 
-            {
-                elementValue1 = getDataCellTextValueByIndex(combination[0]);
-                elementValue2 = getDataCellTextValueByIndex(combination[1]);
-                elementValue3 = getDataCellTextValueByIndex(combination[2]);
-            
-                if (elementValue1 == elementValue2 && elementValue2 && elementValue3 && elementValue1 != ""){
-                    
-                    var gameStatusElement = document.querySelector(".game--status");
-                    
-                    gameStatusElement.innerText = `${elementValue1} has won the game`
-                    
-                    return true;
-                    
-
-                }
-
-            });
+        let isWinnerDetermined = false;
+        winningCellCombinations.forEach(combination =>{
         
-            return false;
+        
+        //go through there winning combinations
+        
+            elementValue1 = getDataCellTextValueByIndex(combination[0]);
+            elementValue2 = getDataCellTextValueByIndex(combination[1]);
+            elementValue3 = getDataCellTextValueByIndex(combination[2]);
+
+        
+            if (elementValue1 == elementValue2 && elementValue2 == elementValue3 && elementValue1 != ""){
+            
+                var gameStatusElement = document.querySelector(".game--status");
+
+                if (elementValue1 == 'X'){
+                    playerWinscore++;
+                }
+            
+                gameStatusElement.innerText = `${elementValue1} has won the game`
+            
+                isWinnerDetermined = true;
+            }
+
+        });
+        
+        
+    
+        return isWinnerDetermined;
+}
         //Get all cells of those attibute values
         //Check all the elements have a same inner text (X or O)
         //Carefull of empty values
         
         
         //2. we have 3 X or 3 O in a row, column or diagonal
-}
 
 function getDataCellTextValueByIndex(index){
-    return document.querySelector(`[data-cell-index="${index}"]`).innerText
-
-}
-
-
-function resetGame(){
-    
+    return document.querySelector(`[data-cell-index="${index}"]`).innerText;
 }
